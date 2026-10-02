@@ -1,0 +1,6 @@
+{
+  "name": "QuizNova - AI Multiplayer Study & Quiz Platform",
+  "description": "Realtime multiplayer AI quiz and collaborative study platform with Google Auth, Firestore, live arena, whiteboard, and educational study materials.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

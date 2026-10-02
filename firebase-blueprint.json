@@ -1,0 +1,228 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "username": { "type": "string", "maxLength": 30, "pattern": "^[a-zA-Z0-9_]{3,30}$" },
+        "email": { "type": "string", "maxLength": 150 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "classLevel": { "type": "string", "maxLength": 50 },
+        "board": { "type": "string", "maxLength": 50 },
+        "bio": { "type": "string", "maxLength": 300 },
+        "profileVisibility": { "type": "string", "enum": ["PUBLIC", "PRIVATE"] },
+        "theme": { "type": "string", "enum": ["light", "dark", "system"] },
+        "soundEnabled": { "type": "boolean" },
+        "animationsEnabled": { "type": "boolean" },
+        "defaultDifficulty": { "type": "string", "maxLength": 20 },
+        "defaultQuestionCount": { "type": "number" },
+        "totalScore": { "type": "number" },
+        "quizzesPlayed": { "type": "number" },
+        "correctAnswers": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "username", "email"]
+    },
+    "UsernameClaim": {
+      "title": "Username Claim",
+      "description": "Unique username registry",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "username": { "type": "string", "maxLength": 30 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "username"]
+    },
+    "QuizRoom": {
+      "title": "Quiz Room",
+      "description": "Multiplayer quiz room state",
+      "type": "object",
+      "properties": {
+        "roomId": { "type": "string", "maxLength": 128 },
+        "roomCode": { "type": "string", "maxLength": 10 },
+        "hostId": { "type": "string", "maxLength": 128 },
+        "hostName": { "type": "string", "maxLength": 100 },
+        "title": { "type": "string", "maxLength": 150 },
+        "classLevel": { "type": "string", "maxLength": 50 },
+        "board": { "type": "string", "maxLength": 50 },
+        "subject": { "type": "string", "maxLength": 50 },
+        "chapter": { "type": "string", "maxLength": 100 },
+        "difficulty": { "type": "string", "maxLength": 20 },
+        "questionCount": { "type": "number" },
+        "timerSeconds": { "type": "number" },
+        "questionType": { "type": "string", "maxLength": 50 },
+        "privacy": { "type": "string", "enum": ["PUBLIC", "PRIVATE"] },
+        "passwordHash": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["WAITING", "STARTING", "LIVE", "PAUSED", "COMPLETED", "CANCELLED", "EXPIRED"] },
+        "currentQuestionIndex": { "type": "number" },
+        "questionStartedAt": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "endedAt": { "type": "string", "format": "date-time" },
+        "maxPlayers": { "type": "number" }
+      },
+      "required": ["roomId", "roomCode", "hostId", "title", "subject", "status"]
+    },
+    "Participant": {
+      "title": "Quiz Participant",
+      "description": "Participant in a quiz room",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "username": { "type": "string", "maxLength": 30 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "isHost": { "type": "boolean" },
+        "isReady": { "type": "boolean" },
+        "score": { "type": "number" },
+        "correctAnswers": { "type": "number" },
+        "answeredQuestions": { "type": "number" },
+        "averageResponseTime": { "type": "number" },
+        "status": { "type": "string", "maxLength": 20 },
+        "joinedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "score"]
+    },
+    "Question": {
+      "title": "Quiz Question",
+      "description": "Curriculum-aligned question",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "question": { "type": "string", "maxLength": 1000 },
+        "options": { "type": "array" },
+        "correctAnswer": { "type": "number" },
+        "explanation": { "type": "string", "maxLength": 2000 },
+        "difficulty": { "type": "string", "maxLength": 20 },
+        "order": { "type": "number" },
+        "points": { "type": "number" }
+      },
+      "required": ["question", "options", "correctAnswer", "explanation"]
+    },
+    "AnswerSubmission": {
+      "title": "Answer Submission",
+      "description": "Recorded participant response",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "questionId": { "type": "string", "maxLength": 128 },
+        "selectedAnswer": { "type": "number" },
+        "isCorrect": { "type": "boolean" },
+        "pointsEarned": { "type": "number" },
+        "responseTimeMs": { "type": "number" },
+        "submittedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "questionId", "selectedAnswer", "isCorrect"]
+    },
+    "ChatMessage": {
+      "title": "Chat Message",
+      "description": "Message in room chat",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "senderId": { "type": "string", "maxLength": 128 },
+        "senderName": { "type": "string", "maxLength": 100 },
+        "senderPhotoURL": { "type": "string", "maxLength": 500 },
+        "text": { "type": "string", "maxLength": 1000 },
+        "type": { "type": "string", "enum": ["USER", "AI", "SYSTEM"] },
+        "mentionsAI": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["senderId", "senderName", "text", "type"]
+    },
+    "WhiteboardState": {
+      "title": "Whiteboard State",
+      "description": "Collaborative drawing state snapshot",
+      "type": "object",
+      "properties": {
+        "roomId": { "type": "string", "maxLength": 128 },
+        "elementsJson": { "type": "string", "maxLength": 500000 },
+        "lastModifiedBy": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["roomId", "elementsJson"]
+    },
+    "QuizResult": {
+      "title": "Quiz Result",
+      "description": "Completed quiz historical record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "uid": { "type": "string", "maxLength": 128 },
+        "roomId": { "type": "string", "maxLength": 128 },
+        "quizTitle": { "type": "string", "maxLength": 150 },
+        "subject": { "type": "string", "maxLength": 50 },
+        "classLevel": { "type": "string", "maxLength": 50 },
+        "score": { "type": "number" },
+        "accuracy": { "type": "number" },
+        "correctAnswers": { "type": "number" },
+        "totalQuestions": { "type": "number" },
+        "rank": { "type": "number" },
+        "aiInsight": { "type": "string", "maxLength": 3000 },
+        "completedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "quizTitle", "score", "accuracy"]
+    },
+    "Achievement": {
+      "title": "User Achievement",
+      "description": "Unlocked badge or milestone",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "achievementKey": { "type": "string", "maxLength": 50 },
+        "title": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 200 },
+        "icon": { "type": "string", "maxLength": 50 },
+        "unlockedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "achievementKey", "title"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "User" },
+      "description": "User profiles and preferences"
+    },
+    "/usernames/{username}": {
+      "schema": { "$ref": "UsernameClaim" },
+      "description": "Unique username lookup registry"
+    },
+    "/quizRooms/{roomId}": {
+      "schema": { "$ref": "QuizRoom" },
+      "description": "Active and past quiz rooms"
+    },
+    "/quizRooms/{roomId}/participants/{participantId}": {
+      "schema": { "$ref": "Participant" },
+      "description": "Participants in a room"
+    },
+    "/quizRooms/{roomId}/questions/{questionId}": {
+      "schema": { "$ref": "Question" },
+      "description": "Quiz questions for room"
+    },
+    "/quizRooms/{roomId}/answers/{answerId}": {
+      "schema": { "$ref": "AnswerSubmission" },
+      "description": "Answer submissions by participants"
+    },
+    "/quizRooms/{roomId}/messages/{messageId}": {
+      "schema": { "$ref": "ChatMessage" },
+      "description": "Realtime chat and @AI messages in room"
+    },
+    "/quizRooms/{roomId}/whiteboard/{docId}": {
+      "schema": { "$ref": "WhiteboardState" },
+      "description": "Collaborative whiteboard canvas state"
+    },
+    "/quizResults/{resultId}": {
+      "schema": { "$ref": "QuizResult" },
+      "description": "Historic quiz performance records"
+    },
+    "/userAchievements/{achievementId}": {
+      "schema": { "$ref": "Achievement" },
+      "description": "Unlocked achievements per user"
+    }
+  }
+}

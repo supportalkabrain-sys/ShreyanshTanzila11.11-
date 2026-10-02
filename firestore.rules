@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 1. Users collection
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId) && incoming().uid == request.auth.uid;
+      allow update: if isOwner(userId) && incoming().uid == existing().uid;
+      allow delete: if isOwner(userId);
+    }
+
+    // 2. Usernames lookup
+    match /usernames/{username} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().uid == request.auth.uid;
+      allow update: if isSignedIn() && existing().uid == request.auth.uid;
+      allow delete: if isSignedIn() && existing().uid == request.auth.uid;
+    }
+
+    // 3. Quiz Rooms (Public readability for discovery and code joining)
+    match /quizRooms/{roomId} {
+      allow read: if true;
+      allow create: if isSignedIn() && incoming().hostId == request.auth.uid;
+      allow update: if isSignedIn();
+      allow delete: if isSignedIn();
+
+      // Subcollection: Participants
+      match /participants/{participantId} {
+        allow read: if true;
+        allow create: if isSignedIn() && (request.auth.uid == participantId || request.auth.uid == incoming().uid);
+        allow update: if isSignedIn();
+        allow delete: if isSignedIn();
+      }
+
+      // Subcollection: Questions
+      match /questions/{questionId} {
+        allow read: if true;
+        allow create, update, delete: if isSignedIn();
+      }
+
+      // Subcollection: Answers
+      match /answers/{answerId} {
+        allow read: if isSignedIn();
+        allow create, update: if isSignedIn() && incoming().uid == request.auth.uid;
+        allow delete: if isSignedIn();
+      }
+
+      // Subcollection: Messages
+      match /messages/{messageId} {
+        allow read: if true;
+        allow create: if isSignedIn();
+        allow update, delete: if isSignedIn();
+      }
+
+      // Subcollection: Whiteboard
+      match /whiteboard/{docId} {
+        allow read: if true;
+        allow write, delete: if isSignedIn();
+      }
+    }
+
+    // 4. Quiz Results
+    match /quizResults/{resultId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && incoming().uid == request.auth.uid;
+      allow update: if isSignedIn() && existing().uid == request.auth.uid;
+      allow delete: if false;
+    }
+
+    // 5. User Achievements
+    match /userAchievements/{achievementId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && incoming().uid == request.auth.uid;
+      allow update: if isSignedIn() && existing().uid == request.auth.uid;
+      allow delete: if false;
+    }
+  }
+}
